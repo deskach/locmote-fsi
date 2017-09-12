@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="style/bootstrap.min.css">
+    <link rel="stylesheet" href="style/locmote-fsi.css">
+</head>
+<body>
+
+<!--Content-->
+<div class="flight-to-form"></div>
+<div class="flight-from-form"></div>
+
+<!--Vendor libraries-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/2.0.0/handlebars.js"></script>
+
+<!--Javascript logic-->
+<script src="src/util.js" type="text/javascript"></script>
+<script src="src/templates/flight-search-template.js" type="text/javascript"></script>
+
+<!--HB template definitions. -->
+<script id="flight-search-template" type="text/x-handlebars-template">
+    <form class="form" name="search">
+        <div class="container">
+            <div class="row">
+                <div class="col col-sm-4">
+                    <label for="fromLoc">From location</label>
+                    <input type="text"
+                           placeholder="From location (eg: Sydney)"
+                           name="from"
+                           id="fromLoc"
+                           required
+                    >
+                </div>
+
+                <div class="col col-sm-4">
+                    <label for="toLoc">Destination</label>
+                    <input type="text"
+                           placeholder="To location (eg: San Jose)"
+                           name="toLoc"
+                           id="toLoc"
+                           required
+                    >
+                </div>
+
+                <div class="col col-sm-4">
+                    <label for="travelDate">Trip Date</label>
+                    <input type="date"
+                           placeholder="Enter date"
+                           name="travelDate"
+                           id="travelDate"
+                           required
+                    >
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col col-sm-12">
+                    <button type="button" name="search">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <p>You can find me in {{city}}. My address is {{number}} {{street}}.</p>
+</script>
+</body>
+</html>
