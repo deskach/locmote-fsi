@@ -55,6 +55,7 @@
                            placeholder="Enter date"
                            name="travelDate"
                            id="travelDate"
+                           value={{date}}
                            required
                     >
                 </div>
@@ -65,6 +66,31 @@
                     <input type="submit" name="search" value="Search"/>
                 </div>
             </div>
+
+            <table class="table table-responsive">
+                <thead>
+                <th>Airline</th>
+                <th>flightNum</th>
+                <th>start</th>
+                <th>Airport</th>
+                <th>finish</th>
+                <th>Airport</th>
+                <th>price</th>
+                </thead>
+                <tbody>
+                {{#search_results}}
+                <tr>
+                    <td>{{airline.name}}</td>
+                    <td>{{flightNum}}</td>
+                    <td>{{start.dateTime}}</td>
+                    <td>{{start.airportName}}</td>
+                    <td>{{finish.dateTime}}</td>
+                    <td>{{finish.airportName}}</td>
+                    <td>{{price}}</td>
+                </tr>
+                {{/search_results}}
+                </tbody>
+            </table>
         </div>
     </form>
 </script>
