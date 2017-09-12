@@ -20,18 +20,23 @@ $(() => {
             const DEFAULT_CONTEXT = {date: toDateInputValue(new Date()),};
             const mergedContext = _.merge(context, DEFAULT_CONTEXT);
             const $el = initHBTemplate('#flight-search-template', cssHook, mergedContext);
+            const $form = $(`${cssHook} form[name="search"]`);
 
             $(`${cssHook} input[type="date"]`).val(mergedContext.date);
-            $(`${cssHook} form[name="search"]`).on('submit', e => {
+            $form.on('submit', e => {
                 const proxyurl = "https://cors-anywhere.herokuapp.com/"; // Needed to get around CORS
                 const url = proxyurl + 'http://node.locomote.com/code-task/flight_search/QF';
                 const args = 'date=2018-09-02&from=SYD&to=JFK';
 
                 e.preventDefault();
 
+                $form.css('cursor', 'progress');
                 $.ajax({
                     url: `${url}?${args}`,
-                    success: (data) => console.log(JSON.stringify(data)),
+                    success: (data) => {
+                        $form.css('cursor', 'default');
+                        console.log(JSON.stringify(data));
+                    },
                 });
                 // console.log(`Search was clicked on ${cssHook}`)
             });
