@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="style/bootstrap.min.css">
     <link rel="stylesheet" href="style/locmote-fsi.css">
 </head>
-<body>
 
+<body>
 <!--Content-->
 <div class="flight-to-form"></div>
 <div class="flight-from-form"></div>
@@ -26,7 +26,7 @@
 <!--HB template definitions. -->
 <script id="flight-search-template" type="text/x-handlebars-template">
     <h2>{{title}}</h2>
-    <form class="form" name="search">
+    <form class="form" name="search" action="#">
         <div class="container">
             <div class="row">
                 <div class="col col-sm-4">
@@ -67,7 +67,6 @@
             </div>
         </div>
     </form>
-    <!--<p>You can find me in {{city}}. My address is {{number}} {{street}}.</p>-->
 </script>
 </body>
 </html>
