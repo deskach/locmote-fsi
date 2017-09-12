@@ -7,13 +7,38 @@ $(() => {
         return $(cssHook).html(theCompiledHtml); // Add the compiled html to the page
     }
 
-    _.set(window, 'locmoteFSI.api.initFlightSearchTemplate', (cssHook, context = {}) => {
-        const $el = initHBTemplate('#flight-search-template', cssHook, context);
+    function toDateInputValue(date) {
+        let local = new Date(date);
 
-        $(`${cssHook} button[name="search"]`).on('click', () => {
-            console.log(`Search was clicked on ${cssHook}`)
+        local.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+
+        return local.toJSON().slice(0, 10);
+    }
+
+    _.set(window, 'locmoteFSI.api.initFlightSearchTemplate',
+        (cssHook, context) => {
+            const DEFAULT_CONTEXT = {
+                date: toDateInputValue(new Date()),
+            };
+            const mergedContext = _.merge(context, DEFAULT_CONTEXT);
+            const $el = initHBTemplate('#flight-search-template', cssHook, mergedContext);
+
+            $(`${cssHook} input[type="date"]`).val(mergedContext.date);
+
+            $(`${cssHook} input[name="search"]`).on('click', (e) => {
+                const proxyurl = "https://cors-anywhere.herokuapp.com/"; // Needed to get around CORS
+                const url = proxyurl + 'http://node.locomote.com/code-task/flight_search/QF';
+                const args = 'date=2018-09-02&from=SYD&to=JFK';
+
+                $.ajax({
+                    url: `${url}?${args}`,
+                    success: (data) => console.log(JSON.stringify(data)),
+                });
+                // console.log(`Search was clicked on ${cssHook}`)
+
+                e.preventDefault();
+            });
+
+            return $el;
         });
-
-        return $el;
-    });
 });
