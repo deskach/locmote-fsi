@@ -1,26 +1,19 @@
-$(function () {
+$(() => {
     function initHBTemplate(templateName, cssHook, context) {
-        // Grab the template script
-        const theTemplateScript = $(templateName).html();
+        const theTemplateScript = $(templateName).html(); // Grab the template script
+        const theTemplate = Handlebars.compile(theTemplateScript); // Compile the template
+        const theCompiledHtml = theTemplate(context); // Pass data to the template
 
-        // Compile the template
-        const theTemplate = Handlebars.compile(theTemplateScript);
-
-        // Pass our data to the template
-        const theCompiledHtml = theTemplate(context);
-
-        // Add the compiled html to the page
-        return $(cssHook).html(theCompiledHtml);
+        return $(cssHook).html(theCompiledHtml); // Add the compiled html to the page
     }
 
-    _.set(window, 'locmoteFSI.initFlightSearchTemplate', function (cssHook, context) {
+    _.set(window, 'locmoteFSI.api.initFlightSearchTemplate', (cssHook, context = {}) => {
         const $el = initHBTemplate('#flight-search-template', cssHook, context);
 
-        $(`${cssHook} button[name="search"]`).on('click', function () {
+        $(`${cssHook} button[name="search"]`).on('click', () => {
             console.log(`Search was clicked on ${cssHook}`)
         });
 
         return $el;
     });
-
 });
