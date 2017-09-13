@@ -45,6 +45,8 @@ $(() => {
                 from: "",
                 to: "",
                 when: toDateInputValue(new Date()),
+                disabled: null,
+                formStyle: "style='cursor: default'",
             };
             const TEMPLATE_NAME = '#flight-search-template';
 
@@ -53,6 +55,19 @@ $(() => {
             const $el = initHBTemplate(
                 TEMPLATE_NAME, cssHook, mergedContext, _ => bindEventHandlers()
             );
+            let flights2beLoaded = 0;
+
+            function toggleDisabled() {
+                if (flights2beLoaded > 0) {
+                    mergedContext.formStyle = "style='cursor: wait'";
+                    mergedContext.disabled = "disabled";
+                } else {
+                    mergedContext.disabled = null;
+                    mergedContext.formStyle = "style='cursor: default'";
+                }
+
+                initHBTemplate(TEMPLATE_NAME, cssHook, mergedContext, _ => bindEventHandlers());
+            }
 
             function resetSearchResults() {
                 mergedContext.search_results = [];
@@ -92,15 +107,23 @@ $(() => {
             function searchAllFlights(settings) {
                 const {startingAirportCodes, endingAirportCodes, when, url} = settings;
 
-                if (startingAirportCodes.length * endingAirportCodes.length > 0) {
+                flights2beLoaded = startingAirportCodes.length * endingAirportCodes.length;
+
+                if (flights2beLoaded > 0) {
                     resetSearchResults();
+                    toggleDisabled();
                 }
 
                 for (let code0 of startingAirportCodes) {
                     for (let code1 of endingAirportCodes) {
                         search4Flights(
                             {from: code0, to: code1, when, url},
-                            data => setSearchResults(data),
+                            data => {
+                                flights2beLoaded -= 1;
+
+                                setSearchResults(data);
+                                toggleDisabled();
+                            },
                             _ => logError(`Failed to find flights between ${code0} and ${code1}`),
                         )
                     }
