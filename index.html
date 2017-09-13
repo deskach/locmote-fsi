@@ -29,9 +29,10 @@
     <form class="form" name="search" action="#">
         <div class="container">
             <div class="row">
-                <div class="col col-sm-4">
+                <div class="col col-sm-4 form-group">
                     <label for="fromLoc">From location</label>
                     <input type="text"
+                           class="form-control"
                            placeholder="From location (eg: Sydney)"
                            name="from"
                            id="fromLoc"
@@ -43,6 +44,7 @@
                 <div class="col col-sm-4">
                     <label for="toLoc">Destination</label>
                     <input type="text"
+                           class="form-control"
                            placeholder="To location (eg: San Jose)"
                            name="toLoc"
                            value="{{to}}"
@@ -54,6 +56,7 @@
                 <div class="col col-sm-4">
                     <label for="travelDate">Trip Date</label>
                     <input type="date"
+                           class="form-control"
                            placeholder="Enter date"
                            name="travelDate"
                            id="travelDate"
@@ -65,19 +68,19 @@
 
             <div class="row">
                 <div class="col col-sm-12">
-                    <input type="submit" name="search" value="Search"/>
+                    <input type="submit" name="search" value="Search" class="btn btn-primary"/>
                 </div>
             </div>
 
-            <table class="table table-responsive">
-                <thead>
+            <table class="table table-stripped">
+                <thead class="thead-default">
                 <th>Airline</th>
                 <th>flightNum</th>
                 <th>start</th>
                 <th>Airport</th>
                 <th>finish</th>
                 <th>Airport</th>
-                <th>price</th>
+                <th>price&nbsp;($)</th>
                 </thead>
                 <tbody>
                 {{#search_results}}
