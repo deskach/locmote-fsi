@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Simple express server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/deskach/locmote-fsi.git"
+  },
+  "author": "deskach",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deskach/locmote-fsi/issues"
+  },
+  "homepage": "https://github.com/deskach/locmote-fsi#readme",
+  "dependencies": {
+    "express": "^4.15.4"
+  }
+}
