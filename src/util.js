@@ -26,14 +26,18 @@ $(() => {
     _.set(window, 'locmoteFSI.api.initFlightSearchTemplate',
         (cssHook, context) => {
             const PROXYURL = "https://cors-anywhere.herokuapp.com/"; // Needed to get around CORS
+            const localhostOrigin = window.location.protocol + '//' + window.location.host;
+            const locmoteOrigin = PROXYURL + 'http://node.locomote.com';
+            const origin = window.location.hostname === "localhost" ? localhostOrigin : locmoteOrigin;
+            const apiName = window.location.hostname === "localhost" ? "localhost" : "locmote";
             const GLOBAL_SETTINGS = {
                 locmote: {
-                    airportsUrl: PROXYURL + 'http://node.locomote.com/code-task/airports',
-                    flightsUrl: PROXYURL + 'http://node.locomote.com/code-task/flight_search/QF',
+                    airportsUrl: `${origin}/code-task/airports`,
+                    flightsUrl: `${origin}/code-task/flight_search/QF`,
                 },
                 localhost: {
-                    airportsUrl: 'http://localhost:300/api/airports',
-                    flightsUrl: 'http://localhost:300/api/flight_search/QF',
+                    airportsUrl: `${origin}/api/airports`,
+                    flightsUrl: `${origin}/api/flights`,
                 }
             };
             const DEFAULT_CONTEXT = {
@@ -44,7 +48,7 @@ $(() => {
             };
             const TEMPLATE_NAME = '#flight-search-template';
 
-            const {airportsUrl, flightsUrl} = GLOBAL_SETTINGS.locmote;
+            const {airportsUrl, flightsUrl} = GLOBAL_SETTINGS[apiName];
             let mergedContext = _.merge(context, DEFAULT_CONTEXT);
             const $el = initHBTemplate(
                 TEMPLATE_NAME, cssHook, mergedContext, _ => bindEventHandlers()
@@ -137,6 +141,5 @@ $(() => {
 
                 $form.on('submit', onSubmit);
             }
-
         });
 });
