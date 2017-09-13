@@ -25,6 +25,17 @@ $(() => {
 
     _.set(window, 'locmoteFSI.api.initFlightSearchTemplate',
         (cssHook, context) => {
+            const PROXYURL = "https://cors-anywhere.herokuapp.com/"; // Needed to get around CORS
+            const GLOBAL_SETTINGS = {
+                locmote: {
+                    airportsUrl: PROXYURL + 'http://node.locomote.com/code-task/airports',
+                    flightsUrl: PROXYURL + 'http://node.locomote.com/code-task/flight_search/QF',
+                },
+                localhost: {
+                    airportsUrl: 'http://localhost:300/api/airports',
+                    flightsUrl: 'http://localhost:300/api/flight_search/QF',
+                }
+            };
             const DEFAULT_CONTEXT = {
                 search_results: [],
                 from: "",
@@ -32,11 +43,12 @@ $(() => {
                 when: toDateInputValue(new Date()),
             };
             const TEMPLATE_NAME = '#flight-search-template';
+
+            const {airportsUrl, flightsUrl} = GLOBAL_SETTINGS.locmote;
             let mergedContext = _.merge(context, DEFAULT_CONTEXT);
             const $el = initHBTemplate(
                 TEMPLATE_NAME, cssHook, mergedContext, _ => bindEventHandlers()
             );
-            const proxyurl = "https://cors-anywhere.herokuapp.com/"; // Needed to get around CORS
 
             function resetSearchResults() {
                 mergedContext.search_results = [];
@@ -53,8 +65,7 @@ $(() => {
             }
 
             function search4Flights(settings, success, failure) {
-                const url = proxyurl + 'http://node.locomote.com/code-task/flight_search/QF';
-                const {from, to, when} = settings;
+                const {from, to, when, url} = settings;
                 const args = `date=${when}&from=${from}&to=${to}`;
 
                 $.ajax({
@@ -65,8 +76,7 @@ $(() => {
             }
 
             function search4Airport(settings, success, failure) {
-                const {name} = settings;
-                const url = proxyurl + 'http://node.locomote.com/code-task/airports';
+                const {name, url} = settings;
 
                 $.ajax({
                     url: encodeURI(`${url}?q=${name}`),
@@ -76,7 +86,7 @@ $(() => {
             }
 
             function searchAllFlights(settings) {
-                const {startingAirportCodes, endingAirportCodes, when} = settings;
+                const {startingAirportCodes, endingAirportCodes, when, url} = settings;
 
                 if (startingAirportCodes.length * endingAirportCodes.length > 0) {
                     resetSearchResults();
@@ -85,7 +95,7 @@ $(() => {
                 for (let code0 of startingAirportCodes) {
                     for (let code1 of endingAirportCodes) {
                         search4Flights(
-                            {from: code0, to: code1, when},
+                            {from: code0, to: code1, when, url},
                             data => setSearchResults(data),
                             _ => logError(`Failed to find flights between ${code0} and ${code1}`),
                         )
@@ -105,13 +115,14 @@ $(() => {
                 mergedContext = _.assign(mergedContext, {from, to, when});
 
                 search4Airport(
-                    {name: from},
+                    {name: from, url: airportsUrl},
                     startingAirports => search4Airport(
-                        {name: to},
+                        {name: to, url: airportsUrl},
                         endingAirports => {
                             searchAllFlights({
                                 startingAirportCodes: startingAirports.map(a => a.airportCode),
                                 endingAirportCodes: endingAirports.map(a => a.airportCode),
+                                url: flightsUrl,
                                 when,
                             });
                         },
