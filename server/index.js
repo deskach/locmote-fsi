@@ -1,6 +1,10 @@
 const express = require('express');
 const app = express();
 
+app.get('/fsi', function (req, res) {
+    res.send('Hello FSI!')
+});
+
 app.get('/', function (req, res) {
     res.send('Hello World!')
 });
