@@ -1,10 +1,14 @@
 $(() => {
-    function initHBTemplate(templateName, cssHook, context) {
-        const theTemplateScript = $(templateName).html(); // Grab the template script
-        const theTemplate = Handlebars.compile(theTemplateScript); // Compile the template
-        const theCompiledHtml = theTemplate(context); // Pass data to the template
+    function initHBTemplate(templateName, cssHook, context, callback) {
+        const templateScript = $(templateName).html(); // Grab the template script
+        const template = Handlebars.compile(templateScript); // Compile the template
+        const compiledHtml = template(context); // Pass data to the template
 
-        return $(cssHook).html(theCompiledHtml); // Add the compiled html to the page
+        const result = $(cssHook).html(compiledHtml); // Add the compiled html to the page
+
+        callback();
+
+        return result;
     }
 
     function toDateInputValue(date) {
@@ -22,25 +26,28 @@ $(() => {
     _.set(window, 'locmoteFSI.api.initFlightSearchTemplate',
         (cssHook, context) => {
             const DEFAULT_CONTEXT = {
-                date: toDateInputValue(new Date()),
                 search_results: [],
+                from: "",
+                to: "",
+                when: toDateInputValue(new Date()),
             };
             const TEMPLATE_NAME = '#flight-search-template';
             let mergedContext = _.merge(context, DEFAULT_CONTEXT);
-            const $el = initHBTemplate(TEMPLATE_NAME, cssHook, mergedContext);
-            const $form = $(`${cssHook} form[name="search"]`);
+            const $el = initHBTemplate(
+                TEMPLATE_NAME, cssHook, mergedContext, _ => bindEventHandlers()
+            );
             const proxyurl = "https://cors-anywhere.herokuapp.com/"; // Needed to get around CORS
 
             function resetSearchResults() {
                 mergedContext.search_results = [];
-                initHBTemplate(TEMPLATE_NAME, cssHook, mergedContext);
+                initHBTemplate(TEMPLATE_NAME, cssHook, mergedContext, _ => bindEventHandlers());
 
                 console.log(`Search results were resetted`)
             }
 
             function setSearchResults(data) {
                 mergedContext.search_results = [...mergedContext.search_results, ...data];
-                initHBTemplate(TEMPLATE_NAME, cssHook, mergedContext);
+                initHBTemplate(TEMPLATE_NAME, cssHook, mergedContext, _ => bindEventHandlers());
 
                 console.log(`Search results were updated`)
             }
@@ -71,7 +78,9 @@ $(() => {
             function searchAllFlights(settings) {
                 const {startingAirportCodes, endingAirportCodes, when} = settings;
 
-                resetSearchResults();
+                if (startingAirportCodes.length * endingAirportCodes.length > 0) {
+                    resetSearchResults();
+                }
 
                 for (let code0 of startingAirportCodes) {
                     for (let code1 of endingAirportCodes) {
@@ -87,12 +96,13 @@ $(() => {
             }
 
             function onSubmit(e) {
+                e.preventDefault();
+
                 const from = $(`${cssHook} input[name="from"]`).val();
                 const to = $(`${cssHook} input[name="toLoc"]`).val();
                 const when = $(`${cssHook} input[name="travelDate"]`).val().toString();
 
-                e.preventDefault();
-                $form.css('cursor', 'progress');
+                mergedContext = _.assign(mergedContext, {from, to, when});
 
                 search4Airport(
                     {name: from},
@@ -111,6 +121,11 @@ $(() => {
                 );
             }
 
-            $form.on('submit', onSubmit);
+            function bindEventHandlers() {
+                const $form = $(`${cssHook} form[name="search"]`);
+
+                $form.on('submit', onSubmit);
+            }
+
         });
 });
